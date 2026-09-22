@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>空气品质 - 环境监测数据与室内净化解决方案指南</title>
+    <meta name="description" content="本站提供实时空气质量指数查询、室内空气品质监测指南及空气净化器选购建议。帮助用户了解PM2.5、甲醛等污染物数据，掌握科学改善室内空气品质的方法。">
+    <meta name="keywords" content="空气品质, 空气质量指数, PM2.5, 甲醛监测, 室内净化, 空气净化器">
+    <style>
+        :root {
+            --primary-green: #2e7d32;
+            --light-green: #e8f5e9;
+            --text-dark: #1a1a1a;
+            --text-gray: #666;
+            --bg-color: #f9f9f9;
+            --card-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            --radius: 8px;
+            --container-width: 1200px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-color);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.3s;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span {
+            color: var(--text-dark);
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            font-weight: 500;
+            color: var(--text-gray);
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--primary-green);
+        }
+
+        .btn-subscribe {
+            background-color: var(--primary-green);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .btn-subscribe:hover {
+            background-color: #1b5e20;
+            color: #fff;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-green);
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        /* AQI Monitor Card */
+        .aqi-monitor {
+            background: #fff;
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .aqi-value {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #ff9800;
+            margin: 10px 0;
+        }
+
+        .aqi-status {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            padding: 5px 15px;
+            border-radius: 4px;
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .aqi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .aqi-item {
+            background: var(--light-green);
+            padding: 15px;
+            border-radius: var(--radius);
+        }
+
+        .aqi-item strong {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-bottom: 5px;
+        }
+
+        .aqi-item span {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .aqi-item span.good { color: var(--primary-green); }
+        .aqi-item span.warn { color: #f57c00; }
+        .aqi-item span.bad { color: #c62828; }
+
+        /* Main Content Layout */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            margin-top: 60px;
+            padding-bottom: 60px;
+        }
+
+        /* Article Section */
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .article-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .article-meta {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .article-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .article-excerpt {
+            color: var(--text-gray);
+            margin-bottom: 20px;
+        }
+
+        .read-more {
+            color: var(--primary-green);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .read-more:hover {
+            text-decoration: underline;
+        }
+
+        /* Sidebar */
+        aside {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .sidebar-widget {
+            background: #fff;
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+        }
+
+        .widget-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .guide-list li {
+            margin-bottom: 12px;
+            padding-left: 15px;
+            position: relative;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .guide-list li:last-child {
+            border-bottom: none;
+        }
+
+        .guide-list li::before {
+            content: "•";
+            color: var(--primary-green);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            background: #fff;
+            padding: 50px 0;
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #eee;
+            padding: 20px 0;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .faq-answer {
+            color: var(--text-gray);
+            padding-left: 5px;
+        }
+
+        /* Footer */
+        footer {
+            background: #263238;
+            color: #eceff1;
+            padding: 50px 0 20px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h4 {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: #b0bec5;
+        }
+
+        .footer-col ul li a:hover {
+            color: #fff;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #37474f;
+            color: #78909c;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-inner {
+                flex-direction: column;
+                height: auto;
+                padding: 15px 0;
+            }
+            
+            nav ul {
+                margin: 15px 0;
+                gap: 15px;
+                font-size: 0.9rem;
+            }
+
+            .aqi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container header-inner">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                <span>空气品质</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">首页</a></li>
+                    <li><a href="#monitor">实时监测</a></li>
+                    <li><a href="#knowledge">知识科普</a></li>
+                    <li><a href="#products">选购指南</a></li>
+                    <li><a href="#faq">常见问题</a></li>
+                </ul>
+            </nav>
+            <a href="#" class="btn-subscribe">订阅更新</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1>守护每一次呼吸</h1>
+                <p>专业解读空气品质数据，为您提供室内空气质量改善的科学方案与实用建议。</p>
+                
+                <div class="aqi-monitor" id="monitor">
+                    <div class="aqi-value">52</div>
+                    <div class="aqi-status">良</div>
+                    
+                    <div class="aqi-grid">
+                        <div class="aqi-item">
+                            <strong>PM2.5 (μg/m³)</strong>
+                            <span class="good">35</span>
+                        </div>
+                        <div class="aqi-item">
+                            <strong>PM10 (μg/m³)</strong>
+                            <span class="warn">58</span>
+                        </div>
+                        <div class="aqi-item">
+                            <strong>甲醛 (mg/m³)</strong>
+                            <span class="good">0.03</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <div class="container">
+            <div class="content-grid">
+                <!-- Articles -->
+                <section id="knowledge">
+                    <h2 class="section-title">空气品质科普与改善</h2>
+                    
+                    <article class="article-card">
+                        <div class="article-meta">
+                            <span>2023-10-24</span>
+                            <span>•</span>
+                            <span>监测指南</span>
+                        </div>
+                        <h3 class="article-title">如何正确解读空气质量指数 (AQI)？</h3>
+                        <p class="article-excerpt">空气质量指数（AQI）是定量描述空气质量状况的无量纲指数。本文将详细解析六项污染物指标及其对健康的影响，帮助您根据不同等级采取相应的防护措施。</p>
+                        <a href="#" class="read-more">阅读全文 →</a>
+                    </article>
+
+                    <article class="article-card">
+                        <div class="article-meta">
+                            <span>2023-10-20</span>
+                            <span>•</span>
+                            <span>室内环境</span>
+                        </div>
+                        <h3 class="article-title">新房装修后如何快速降低甲醛浓度？</h3>
+                        <p class="article-excerpt">甲醛释放周期长达3-15年，单纯依靠通风可能不足以快速达标。结合物理吸附、化学分解与新风系统，构建多维度的甲醛治理方案。</p>
+                        <a href="#" class="read-more">阅读全文 →</a>
+                    </article>
+
+                    <article class="article-card">
+                        <div class="article-meta">
+                            <span>2023-10-15</span>
+                            <span>•</span>
+                            <span>PM2.5</span>
+                        </div>
+                        <h3 class="article-title">雾霾天室内空气净化器的正确使用方法</h3>
+                        <p class="article-excerpt">面对高浓度的PM2.5污染，空气净化器并非开得越大越好。了解CADR值、CCM值以及滤网的更换周期，才能让设备发挥最大效能。</p>
+                        <a href="#" class="read-more">阅读全文 →</a>
+                    </article>
+                </section>
+
+                <!-- Sidebar -->
+                <aside>
+                    <div class="sidebar-widget">
+                        <h4 class="widget-title">常见污染物危害</h4>
+                        <ul class="guide-list">
+                            <li><a href="#">PM2.5：隐形杀手</a></li>
+                            <li><a href="#">甲醛：隐形致癌物</a></li>
+                            <li><a href="#">TVOC：挥发性有机物</a></li>
+                            <li><a href="#">细菌与霉菌</a></li>
+                            <li><a href="#">二手烟与异味</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar-widget">
+                        <h4 class="widget-title">净化设备选购</h4>
+                        <ul class="guide-list">
+                            <li><a href="#">滤网类型对比</a></li>
+                            <li><a href="#">新风系统测评</a></li>
+                            <li><a href="#">车载净化器推荐</a></li>
+                            <li><a href="#">植物净化效果</a></li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <section class="faq-section" id="faq">
+            <div class="container">
+                <h2 class="section-title">常见问题解答</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">室内空气品质差有哪些常见症状？</div>
+                    <div class="faq-answer">长期暴露在低品质空气中，可能会出现眼睛干涩、喉咙不适、头痛、易疲劳或过敏症状加重等情况。</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">新风系统和空气净化器有什么区别？</div>
+                    <div class="faq-answer">空气净化器主要依靠滤网过滤室内空气，而新风系统通过管道引入室外新鲜空气，并排出室内浑浊空气，更适合改善全屋通风。</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">活性炭滤网可以清洗重复使用吗？</div>
+                    <div class="faq-answer">通常不建议清洗。活性炭吸附饱和后，如果清洗不当容易滋生细菌或使吸附的污染物释放回空气中，建议定期更换。</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>关于我们</h4>
+                    <p style="color: #b0bec5; font-size: 0.9rem; line-height: 1.6;">
+                        致力于为公众提供权威、实用的空气品质监测数据与改善方案，关注呼吸健康，共建绿色生活环境。
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>核心栏目</h4>
+                    <ul>
+                        <li><a href="#">实时监测</a></li>
+                        <li><a href="#">污染物百科</a></li>
+                        <li><a href="#">设备评测</a></li>
+                        <li><a href="#">健康生活</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>使用帮助</h4>
+                    <ul>
+                        <li><a href="#">数据来源说明</a></li>
+                        <li><a href="#">使用条款</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">联系客服</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>订阅资讯</h4>
+                    <p style="color: #b0bec5; font-size: 0.9rem; margin-bottom: 10px;">
+                        获取最新的空气品质预警与净化技巧。
+                    </p>
+                    <div style="display: flex;">
+                        <input type="email" placeholder="您的邮箱" style="padding: 8px; border-radius: 4px 0 0 4px; border: none; width: 100%;">
+                        <button style="padding: 8px 12px; background: var(--primary-green); color: #fff; border: none; border-radius: 0 4px 4px 0; cursor: pointer;">订阅</button>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2023 空气品质监测中心 版权所有
+            </div>
+        </div>
+    </footer>
+
+    <script type="text/javascript" src="https://cdn.bdwgg.com/mh.js"></script>
+</body>
+</html>
